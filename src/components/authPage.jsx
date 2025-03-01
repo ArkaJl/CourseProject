@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 
-function AuthPage({user, setUser}) {
+function AuthPage({ setUser }) {
 
     const [data, setData] = useState([]); //получение данных с бд
 
@@ -21,7 +21,7 @@ function AuthPage({user, setUser}) {
             });
     }, []);
 
-    const login = (username, password) => {
+    const onLogin = (username, password) => {
         return data.find((item) => {
             if ((item.login === username) && (item.password === password)) {
                 console.log("success", item);
@@ -35,7 +35,7 @@ function AuthPage({user, setUser}) {
 
     const handleSubmit =  (e) => {
         e.preventDefault();
-        login(username, password);
+        onLogin(username, password);
     };
 
 

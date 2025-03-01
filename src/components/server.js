@@ -1,38 +1,47 @@
 import express from 'express';
-import mysql from 'mysql2';
+import mysql from 'mysql2/promise';
 import cors from 'cors';
 
 const app = express();
 const port = 5000;
 
+app.use(express.json());
 app.use(cors());
 
-const connection = mysql.createConnection({
+const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '1234',
-    database: 'sys'
+    database: 'sys',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
 });
 
-connection.connect((err) => {
-    if (err) {
-        console.error('Ошибка подключения к базе данных:', err);
-        return;
-    }
-    console.log('Подключение к базе данных успешно установлено');
-});
-
-app.get('/api/data/users', (req, res) => {
-    const query = 'SELECT * FROM users';
-
-    connection.query(query, (err, results) => {
-        if (err) {
-            console.error('Ошибка выполнения запроса:', err);
-            res.status(500).send('Ошибка сервера' + err.message);
-            return;
-        }
+app.get('/api/data/users', async (req, res) => {
+    try {
+        const [results] = await pool.query('SELECT * FROM users');
         res.json(results);
-    });
+    } catch (err) {
+        console.error('Ошибка выполнения запроса:', err);
+        res.status(500).send('Ошибка сервера: ' + err.message);
+    }
+});
+
+app.post('/api/register', async (req, res) => {
+    const { login, password, role , username} = req.body;
+
+    try {
+        const query = `
+      INSERT INTO users (login, password, role, username)
+      VALUES (?, ?, ?, ?)`;
+
+        const [result] = await pool.execute(query, [login, password, role, username]);
+        res.status(201).json({ message: 'Пользователь зарегистрирован', userId: result.insertId });
+    } catch (error) {
+        console.error('Ошибка при регистрации:', error);
+        res.status(500).json({ error: 'Ошибка сервера' });
+    }
 });
 
 app.listen(port, () => {

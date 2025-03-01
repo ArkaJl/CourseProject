@@ -6,12 +6,22 @@ body {
     padding: 0;
     background-size: 400% 400%;
     animation: gradientBackground 10s ease infinite;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 @keyframes gradientBackground {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
+}
+::-webkit-scrollbar{
+    width: 10px;
+    background-color: #000000;
+}
+::-webkit-scrollbar-thumb{
+    background-color: #272727;
 }
 
 h1, h2 {
@@ -47,6 +57,9 @@ nav a:hover {
 
 .container {
     padding: 20px 0 20px 0;
+}
+.margin{
+    margin: 40px 0 40px 0;
 }
 
 .card {
@@ -105,7 +118,7 @@ nav a:hover {
     box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], input[type="email"] {
     padding: 10px;
     width: 100%;
     margin: 10px 0;
@@ -116,24 +129,39 @@ input[type="text"], input[type="password"] {
     font-size: 1.1em;
 }
 
-input[type="text"]:focus, input[type="password"]:focus {
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
     border-color: #FFFF66;
     outline: none;
+}
+select {
+    padding: 10px;
+    width: 100%;
+    margin: 10px 0;
+    border: 1px solid #80FF00;
+    border-radius: 10px;
+    background-color: transparent;
+    color: #80FF00;
+    font-size: 1.1em;
+}
+option {
+    background-color: #2d7a2a;
 }
 
 .form-container {
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
+    padding-bottom: 40px;
 }
 
 footer {
+    margin-top: auto;
     text-align: center;
     padding: 10px 0;
     background-color: rgba(0, 0, 0, 0.8);
     color: #80FF00;
     font-size: 1em;
-    position: absolute; /* Открепленное положение */
+    /*position: sticky; !* Открепленное положение *!*/
     bottom: 0;
     width: 100%;
     box-shadow: 0 0 20px rgba(0, 175, 148, 0.5);
