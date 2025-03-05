@@ -28,6 +28,48 @@ app.get('/api/data/users', async (req, res) => {
     }
 });
 
+app.get('/api/data/categories', async (req, res) => {
+    try {
+        const [results] = await pool.query('SELECT * FROM categories');
+        res.json(results);
+    } catch (err) {
+        console.error('Ошибка выполнения запроса:', err);
+        res.status(500).send('Ошибка сервера: ' + err.message);
+    }
+});
+app.get('/api/data/categories/:categoryId/courses', async (req, res) => {
+    const {categoryId} = req.params;
+    try {
+        const [results] = await pool.query('SELECT * FROM courses WHERE categoryId=?', [categoryId]);
+        res.json(results);
+    } catch (err) {
+        console.error('Ошибка выполнения запроса:', err);
+        res.status(500).send('Ошибка сервера: ' + err.message);
+    }
+});
+app.get('/api/data/courses/:courseId/lessons', async (req, res) => {
+    const {courseId} = req.params;
+    try {
+        const [results] = await pool.query('SELECT * FROM lessons WHERE courseId=?', [courseId]);
+        res.json(results);
+    } catch (err) {
+        console.error('Ошибка выполнения запроса:', err);
+        res.status(500).send('Ошибка сервера: ' + err.message);
+    }
+});
+
+
+
+app.get('/api/data/courses', async (req, res) => {
+    try {
+        const [results] = await pool.query('SELECT * FROM courses');
+        res.json(results);
+    } catch (err) {
+        console.error('Ошибка выполнения запроса:', err);
+        res.status(500).send('Ошибка сервера: ' + err.message);
+    }
+});
+
 app.post('/api/register', async (req, res) => {
     const { login, password, role , username} = req.body;
 

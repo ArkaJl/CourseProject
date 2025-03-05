@@ -1,5 +1,5 @@
 import {useState} from "react";
-import Search from "./Search.js";
+import SearchPage from "./searchPage.jsx";
 
 function SearchCoursesPanel() {
     const [term, setTerm] = useState('');
@@ -7,16 +7,16 @@ function SearchCoursesPanel() {
     const handleSubmitSearch = (evt) =>{
         evt.preventDefault();
         console.log(term);
-        console.log(Search(term));
+        console.log(SearchPage(term));
     }
 
     return <div>
-        <form onSubmit={handleSubmitSearch}>
-            <h2>Searching: </h2>
+        <form onSubmit={handleSubmitSearch} className="card ">
+            <h2>Поиск курсов</h2>
             <input type="text" id="searchInput" onChange={(e) => {
                 setTerm(e.target.value)
             }}/>
-            <button type="submit">Search</button>
+            <button className="button" type="submit">🎶 Поиск! 🎶</button>
         </form>
     </div>
 

@@ -29,6 +29,9 @@ h1, h2 {
     font-size: 2.5em;
     text-shadow: 2px 2px 5px #000;
 }
+ul{
+    padding: 0;
+}
 
 nav {
     position: relative;
@@ -50,9 +53,19 @@ nav a {
     font-size: 1.2em;
     transition: color 0.3s ease;
 }
+.link{
+    text-decoration: none;
+    font-size: 1.2em;
+    transition: color 0.3s ease;
+}
 
 nav a:hover {
     color: #FFFF66;
+}
+.middle-width{
+    margin: 0 auto;
+    width: 100%;
+    max-width: 400px;
 }
 
 .container {
@@ -104,7 +117,6 @@ nav a:hover {
 
 .leaderboard ul {
     list-style-type: none;
-    padding: 0;
 }
 
 .leaderboard li {
@@ -182,7 +194,7 @@ footer {
     background-color: #008947;
 }
 u{
-    text-underline-position: under
+    text-underline-position: under;
 }
 .notDot{
     list-style-type:none;
@@ -204,4 +216,12 @@ u{
 }
 .flex-right{
     align-items: flex-end;
+}
+.flex{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.padding-left-right{
+    padding: 0 20px 0 20px ;
 }
