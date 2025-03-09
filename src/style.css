@@ -165,6 +165,12 @@ option {
     margin: 0 auto;
     padding-bottom: 40px;
 }
+.profile-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
 
 footer {
     margin-top: auto;

@@ -6,6 +6,7 @@ import CourseListPage from "./components/courseListPage.jsx";
 import Categories from "./components/categories.jsx";
 import LessonsPage from "./components/lessonsPage.jsx";
 import SearchPage from "./components/searchPage.jsx";
+import ProfilePage from "./components/profilePage.jsx";
 
 function App() {
     const [user, setUser] = useState(null); //залогиненый юзер
@@ -64,10 +65,14 @@ function App() {
                 )}
             </div>
             <Routes>
-                <Route path="/login" element={user ? <Navigate to="/"/> : <AuthPage setUser={setUser}/>}/>
+                <Route path="/login" element={user ? <Navigate to="/categories"/> : <AuthPage setUser={setUser}/>}/>
                 <Route
                     path="/register"
                     element={user ? <Navigate to="/categories"/> : <RegistryPage setUser={setUser}/>}
+                />
+                <Route
+                    path="/profile"
+                    element={user ? <ProfilePage user={user}/> : <Fragment/>}
                 />
                 <Route
                     path="/search"

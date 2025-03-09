@@ -26,11 +26,11 @@ function categories(){
         return fakeItem;
     }
 
-    const result = fake().map((item) => {
+    const result = data.map((item) => {
         return <ul key={item.id}>
             <Link to={`/categories/${item.id}/courses`} className="link">
                 <li className="li-element notDot flex">
-                    <h3 className="padding-left-right">{item.name}</h3>
+                    <h3 className="padding-left-right">{item.title}</h3>
                     <p className="padding-left-right">{item.description} --------------→</p>
                 </li>
             </Link>

@@ -12,7 +12,7 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '1234',
-    database: 'sys',
+    database: 'db',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
@@ -40,7 +40,7 @@ app.get('/api/data/categories', async (req, res) => {
 app.get('/api/data/categories/:categoryId/courses', async (req, res) => {
     const {categoryId} = req.params;
     try {
-        const [results] = await pool.query('SELECT * FROM courses WHERE categoryId=?', [categoryId]);
+        const [results] = await pool.query('SELECT * FROM courses WHERE category_id=?', [categoryId]);
         res.json(results);
     } catch (err) {
         console.error('Ошибка выполнения запроса:', err);
@@ -50,7 +50,22 @@ app.get('/api/data/categories/:categoryId/courses', async (req, res) => {
 app.get('/api/data/courses/:courseId/lessons', async (req, res) => {
     const {courseId} = req.params;
     try {
-        const [results] = await pool.query('SELECT * FROM lessons WHERE courseId=?', [courseId]);
+        const [results] = await pool.query('SELECT * FROM lessons WHERE course_id=?', [courseId]);
+        res.json(results);
+    } catch (err) {
+        console.error('Ошибка выполнения запроса:', err);
+        res.status(500).send('Ошибка сервера: ' + err.message);
+    }
+});
+
+app.get('/api/data/lessonResult/:userId/result', async (req, res) => {
+    const {userId} = req.params;
+    try {
+        const [results] = await pool.query('SELECT lr.*, l.description, l.order, c.name\n' +
+            'FROM lesson_result lr \n' +
+            'JOIN lessons l ON lr.lesson_id = l.id \n' +
+            'JOIN courses c ON l.course_id = c.id \n' +
+            'WHERE lr.student_id = ?', [userId]);
         res.json(results);
     } catch (err) {
         console.error('Ошибка выполнения запроса:', err);

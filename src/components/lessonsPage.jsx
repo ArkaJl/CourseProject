@@ -1,15 +1,16 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {faker} from "@faker-js/faker";
-import {Link} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 
 function LessonsPage() {
     const [data, setData] = useState([]); //получение данных с бд
+    const { courseId } = useParams();
 
 
     useEffect(() => {
         // Запрос данных с сервера
-        axios.get('http://localhost:5000/api/data/tasks')
+        axios.get(`http://localhost:5000/api/data/courses/${courseId}/lessons`)
             .then(response => {
                 setData(response.data);
             })
@@ -26,7 +27,7 @@ function LessonsPage() {
         return fakeItem;
     }
 
-    const result = fake().map((item) => {
+    const result = data.sort((a, b) => a.order - b.order).map((item) => {
         return <ul key={item.id}>
             <Link to={`/lessons/${item.id}/task`} className="link">
                 <li className="li-element notDot flex">
@@ -36,7 +37,7 @@ function LessonsPage() {
                 </li>
             </Link>
         </ul>
-    }).sort((a, b) => a.order - b.order);
+    })
 
     return <div className="card">
         <h2>Уроки</h2>
