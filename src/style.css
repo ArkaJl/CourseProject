@@ -228,6 +228,11 @@ u{
     justify-content: space-between;
     align-items: center;
 }
+.flex-center{
+    align-items: center;
+    display: flex;
+    justify-content: space-around;
+}
 .padding-left-right{
     padding: 0 20px 0 20px ;
 }

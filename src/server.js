@@ -9,15 +9,16 @@ app.use(express.json());
 app.use(cors());
 
 const pool = mysql.createPool({
-    host: 'localhost',
+    host: 'MySQL-8.2', //localhost
     user: 'root',
-    password: '1234',
+    password: '',
     database: 'db',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
 });
 
+//пользователи для автризации
 app.get('/api/data/users', async (req, res) => {
     try {
         const [results] = await pool.query('SELECT * FROM users');
@@ -28,6 +29,34 @@ app.get('/api/data/users', async (req, res) => {
     }
 });
 
+//список классов пользователя
+app.get('/api/data/:user/classes', async (req, res) => {
+    const {user} = req.params;
+    try {
+        const [results] = await pool.query('SELECT cs.*, cl.name, cl.teacher_id\n' +
+            'FROM class_students cs \n' +
+            'JOIN classes cl ON cs.class_id = cl.id \n' +
+            'WHERE cs.student_id = ?', [user]);
+        res.json(results);
+    } catch (err) {
+        console.error('Ошибка выполнения запроса:', err);
+        res.status(500).send('Ошибка сервера: ' + err.message);
+    }
+});
+
+//тут список курсоов определенного учителя
+app.get('/api/data/:teacherId/courses', async (req, res) => {
+    const {teacherId} = req.params;
+    try {
+        const [results] = await pool.query('SELECT l.*, c.teacher_id, c.name, u.username FROM courses c JOIN lessons l ON l.course_id = c.id JOIN users u ON c.teacher_id = u.id WHERE c.teacher_id=?', [teacherId]);
+        res.json(results);
+    } catch (err) {
+        console.error('Ошибка выполнения запроса:', err);
+        res.status(500).send('Ошибка сервера: ' + err.message);
+    }
+});
+
+//список категорий
 app.get('/api/data/categories', async (req, res) => {
     try {
         const [results] = await pool.query('SELECT * FROM categories');
@@ -37,6 +66,8 @@ app.get('/api/data/categories', async (req, res) => {
         res.status(500).send('Ошибка сервера: ' + err.message);
     }
 });
+
+//список курсов в категории
 app.get('/api/data/categories/:categoryId/courses', async (req, res) => {
     const {categoryId} = req.params;
     try {
@@ -47,6 +78,8 @@ app.get('/api/data/categories/:categoryId/courses', async (req, res) => {
         res.status(500).send('Ошибка сервера: ' + err.message);
     }
 });
+
+//список уроков в курсе
 app.get('/api/data/courses/:courseId/lessons', async (req, res) => {
     const {courseId} = req.params;
     try {
@@ -58,6 +91,7 @@ app.get('/api/data/courses/:courseId/lessons', async (req, res) => {
     }
 });
 
+//результаты уроков пользователя
 app.get('/api/data/lessonResult/:userId/result', async (req, res) => {
     const {userId} = req.params;
     try {
@@ -73,11 +107,10 @@ app.get('/api/data/lessonResult/:userId/result', async (req, res) => {
     }
 });
 
-
-
+//Поиск курсов
 app.get('/api/data/courses', async (req, res) => {
     try {
-        const [results] = await pool.query('SELECT * FROM courses');
+        const [results] = await pool.query('SELECT l.*, c.teacher_id, c.name, u.username FROM courses c JOIN lessons l ON l.course_id = c.id JOIN users u ON c.teacher_id = u.id');
         res.json(results);
     } catch (err) {
         console.error('Ошибка выполнения запроса:', err);
@@ -85,6 +118,7 @@ app.get('/api/data/courses', async (req, res) => {
     }
 });
 
+//регистрация пользователей
 app.post('/api/register', async (req, res) => {
     const { login, password, role , username} = req.body;
 

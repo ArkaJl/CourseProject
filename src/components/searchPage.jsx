@@ -10,7 +10,7 @@ function SearchPage() {
 
     useEffect(() => {
         // Запрос данных с сервера
-        axios.get('http://localhost:5000/api/data/categories')
+        axios.get('http://localhost:5000/api/data/courses')
             .then(response => {
                 setData(response.data);
             })
@@ -27,28 +27,23 @@ function SearchPage() {
         return fakeItem;
     }
 
-    const sortedTerm = fake().filter(item => item.name.toLowerCase().includes(term.toLowerCase()));
+    const sortedTerm = data.filter(item => item.name.toLowerCase().includes(term.toLowerCase()));
 
-    const handleSubmitSearch = (evt) =>{
-        evt.preventDefault();
-        setTerm(evt.target.value);
-    }
 
 
     return <div>
-        <form onSubmit={handleSubmitSearch} className="card ">
+        <form className="card ">
             <h2>Поиск курсов</h2>
             <input type="text" id="searchInput" onChange={(e) => {
                 setTerm(e.target.value)
             }}/>
-            <button className="button" type="submit">🎶 Поиск! 🎶</button>
         </form>
-        <div>{sortedTerm.map((item) => {
+        <div className="profile-container">{sortedTerm.map((item) => {
             return <ul key={item.id}>
-                <Link to={`/lessons/${item.id}/task`} className="link">
+                <Link to={`/courses/${item.id}/lessons`} className="link">
                     <li className="li-element notDot flex">
-                        <h3 className="padding-left-right">{item.order}</h3>
-                        <h3 className="padding-left-right">{item.name}</h3>
+                        <h3 className="padding-left-right">By {item.username}</h3>
+                        <h3 className="padding-left-right"> ---- {item.name} ----</h3>
                         <p className="padding-left-right">{item.description} --------------→</p>
                     </li>
                 </Link>

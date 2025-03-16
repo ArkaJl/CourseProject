@@ -7,6 +7,9 @@ import Categories from "./components/categories.jsx";
 import LessonsPage from "./components/lessonsPage.jsx";
 import SearchPage from "./components/searchPage.jsx";
 import ProfilePage from "./components/profilePage.jsx";
+import ClassesPage from "./components/classesPage.jsx";
+import CoursesListByTeacherPage from "./components/coursesListByTeacherPage.jsx";
+import TaskPage from "./components/taskPage.jsx";
 
 function App() {
     const [user, setUser] = useState(null); //залогиненый юзер
@@ -29,7 +32,7 @@ function App() {
 
                 {user ? (<div className="center">
                     <Link to="/profile" className="center padding-left-right"><h3>Profile</h3></Link>
-                    <Link to="/chievements" className="center padding-left-right"><h3>Achievements</h3></Link>
+                    <Link to="/classes" className="center padding-left-right"><h3>Classes</h3></Link>
                     <Link to="/search" className="center padding-left-right"><h3>Search Courses</h3></Link>
                     </div>
                 ):(
@@ -75,6 +78,14 @@ function App() {
                     element={user ? <ProfilePage user={user}/> : <Fragment/>}
                 />
                 <Route
+                    path="/classes"
+                    element={user ? <ClassesPage user={user}/> : <Fragment/>}
+                />
+                <Route
+                    path="/byTeacher/:teacherId/courses"
+                    element={user ? <CoursesListByTeacherPage /> : <Fragment/>}
+                />
+                <Route
                     path="/search"
                     element={user ? <SearchPage/> : <Fragment></Fragment>}
                 />
@@ -93,6 +104,10 @@ function App() {
                 <Route
                     path="/courses/:courseId/lessons"
                     element={<LessonsPage/>}
+                />
+                <Route
+                    path="/lessons/:taskId/task"
+                    element={<TaskPage/>}
                 />
             </Routes>
             <footer>
