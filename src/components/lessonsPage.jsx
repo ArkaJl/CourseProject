@@ -29,7 +29,7 @@ function LessonsPage() {
 
     const result = data.sort((a, b) => a.order - b.order).map((item) => {
         return <ul key={item.id}>
-            <Link to={`/lessons/${item.id}/task`} className="link">
+            <Link to={`/lessons/${item.id}/questions`} className="link">
                 <li className="li-element notDot flex">
                     <h3 className="padding-left-right">{item.order}</h3>
                     <h3 className="padding-left-right">{item.name}</h3>

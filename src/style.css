@@ -62,6 +62,26 @@ nav a {
 nav a:hover {
     color: #FFFF66;
 }
+.error-message {
+    color: #ff0000;
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+}
+
+.success-message {
+    color: #008000;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.input-error {
+    border-color: #ff0000;
+}
+
+.button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 .middle-width{
     margin: 0 auto;
     width: 100%;
@@ -132,7 +152,17 @@ nav a:hover {
 
 input[type="text"], input[type="password"], input[type="email"] {
     padding: 10px;
-    width: 100%;
+    width: 99%;
+    margin: 10px 0;
+    border: 1px solid #80FF00;
+    border-radius: 10px;
+    background-color: transparent;
+    color: white;
+    font-size: 1.1em;
+}
+input[type="number"]{
+    padding: 10px;
+    width: 30%;
     margin: 10px 0;
     border: 1px solid #80FF00;
     border-radius: 10px;
@@ -141,7 +171,7 @@ input[type="text"], input[type="password"], input[type="email"] {
     font-size: 1.1em;
 }
 
-input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="number"]:focus {
     border-color: #FFFF66;
     outline: none;
 }
@@ -199,6 +229,11 @@ footer {
 .li-element:hover{
     background-color: #008947;
 }
+.li-element.selected {
+    background-color: #0fd877;
+    color: white;
+    box-shadow: 0 0 20px rgba(43, 255, 191, 0.6);
+}
 u{
     text-underline-position: under;
 }
@@ -235,4 +270,149 @@ u{
 }
 .padding-left-right{
     padding: 0 20px 0 20px ;
+}
+
+
+/* Management Page Styles */
+.management-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.management-column {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    padding: 15px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.course-list, .lesson-list, .task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.course-item, .lesson-item, .task-item {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.course-item:hover, .lesson-item:hover {
+    background: rgba(128, 255, 0, 0.2);
+    cursor: pointer;
+}
+
+.selected {
+    border: 2px solid #80FF00;
+    box-shadow: 0 0 10px rgba(128, 255, 0, 0.5);
+}
+
+.course-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.category-badge {
+    background: #006633;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+}
+
+.options-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.options-list li {
+    padding: 5px;
+    margin: 3px 0;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.correct-answer {
+    color: #80FF00;
+    font-weight: bold;
+}
+
+.delete-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.3s;
+}
+
+.delete-btn:hover {
+    background: #cc0000;
+}
+
+.delete-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+}
+
+.task-content {
+    margin-bottom: 10px;
+}
+
+.task-text {
+    color: #aaa;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.task-score {
+    color: #80FF00;
+    font-weight: bold;
+}
+.error-message {
+    background: rgba(255, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.retry-btn {
+    background: #80FF00;
+    color: black;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.task-item {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border-left: 3px solid #80FF00;
+}
+
+.lessons-list {
+    margin-top: 1rem;
+}
+
+.lesson-item {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
 }

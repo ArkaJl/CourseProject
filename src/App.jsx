@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import AuthPage from "./components/authPage.jsx";
-import {Fragment, useState} from "react";
+import {Fragment, useState, useEffect} from "react";
 import RegistryPage from "./components/registryPage.jsx";
 import CourseListPage from "./components/courseListPage.jsx";
 import Categories from "./components/categories.jsx";
@@ -10,16 +10,37 @@ import ProfilePage from "./components/profilePage.jsx";
 import ClassesPage from "./components/classesPage.jsx";
 import CoursesListByTeacherPage from "./components/coursesListByTeacherPage.jsx";
 import TaskPage from "./components/taskPage.jsx";
+import TeacherPanel from "./components/createLessonPage.jsx";
+import CourseManagementPage from "./components/CourseManagement.jsx";
 
 function App() {
-    const [user, setUser] = useState(null); //залогиненый юзер
+    const [user, setUser] = useState(null); // залогиненый юзер
+
+    // При монтировании компонента проверяем localStorage
+    useEffect(() => {
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+            try {
+                setUser(JSON.parse(savedUser));
+            } catch (e) {
+                localStorage.removeItem('user');
+            }
+        }
+    }, []);
 
     const logOut = () => {
+        localStorage.removeItem('user');
         setUser(null);
     }
-    const loginForTest = () =>{
-        setUser("dad");
-    }
+
+    // Обновляем localStorage при изменении пользователя
+    useEffect(() => {
+        if (user) {
+            localStorage.setItem('user', JSON.stringify(user));
+        }
+    }, [user]);
+
+    console.log(user);
 
     return (
         <Router>
@@ -29,43 +50,40 @@ function App() {
                     <h2>LightLingo</h2>
                 </Link>
 
-
                 {user ? (<div className="center">
-                    <Link to="/profile" className="center padding-left-right"><h3>Profile</h3></Link>
-                    <Link to="/classes" className="center padding-left-right"><h3>Classes</h3></Link>
-                    <Link to="/search" className="center padding-left-right"><h3>Search Courses</h3></Link>
+                        <Link to="/profile" className="center padding-left-right"><h3>Профиль</h3></Link>
+                        <Link to="/classes" className="center padding-left-right"><h3>Классы</h3></Link>
+                        <Link to="/search" className="center padding-left-right"><h3>Поиск курсов</h3></Link>
+                        {user.role === "teacher" ? <Link to="/create-lesson" className="li-element padding-left-right"><h3>Создать урок</h3></Link> : null}
+                        {user.role === "teacher" ? <Link to="/manage-courses" className="li-element padding-left-right"><h3>Управление курсами</h3></Link> : null}
                     </div>
-                ):(
+                ) : (
                     <Fragment></Fragment>
                 )}
 
-                {/*кнопки войти и зарегистрироваться*/}
                 <div className="container flex-right">
                     {user ? (
                         <div className="center padding-left-right">
-                            <Link className="li-element" to="/" onClick={logOut}>Logout</Link>
+                            <Link className="li-element" to="/" onClick={logOut}>Выйти</Link>
                             <a className="card">Welcome, {user.username} ({user.role}!)</a>
                         </div>
                     ) : (
                         <div className="center padding-left-right">
-                            <Link className="li-element" to="/login">Login</Link>
-                            <Link className="li-element" to="/register">Register</Link>
-                            <Link className="li-element" to="/categories" onClick={loginForTest}>login for test</Link>
+                            <Link className="li-element" to="/login">Войти</Link>
+                            <Link className="li-element" to="/register">Зарегистрироваться</Link>
                         </div>
                     )}
                 </div>
-
             </nav>
 
-            {/*Приветствие*/}
             <div className="container">
                 {user ? <Fragment />
-                     : (
-                    <div className="card form-container">
-                        <h2>Welcome to The Start Page!</h2>
-                        <p><u>Log in </u>or <u>register</u> to continue !</p>
-                    </div>
-                )}
+                    : (
+                        <div className="card form-container">
+                            <h2>Добро пожаловать на стартовую страницу!</h2>
+                            <p><u>Войдите </u>или <u>зарегистрируйтесь</u>, чтобы продолжить !</p>
+                        </div>
+                    )}
             </div>
             <Routes>
                 <Route path="/login" element={user ? <Navigate to="/categories"/> : <AuthPage setUser={setUser}/>}/>
@@ -106,8 +124,16 @@ function App() {
                     element={<LessonsPage/>}
                 />
                 <Route
-                    path="/lessons/:taskId/task"
-                    element={<TaskPage/>}
+                    path="/lessons/:lessonId/questions"
+                    element={user? <TaskPage user={user}/> : <Fragment/>}
+                />
+                <Route
+                    path="/create-lesson"
+                    element={user?.role === 'teacher' ? <TeacherPanel user={user} /> : <Navigate to="/you-not-teacher!" />}
+                />
+                <Route
+                    path="/manage-courses"
+                    element={user?.role === 'teacher' ? <CourseManagementPage user={user} /> : <Navigate to="/" />}
                 />
             </Routes>
             <footer>
