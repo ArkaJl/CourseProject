@@ -7,11 +7,13 @@ import Categories from "./components/categories.jsx";
 import LessonsPage from "./components/lessonsPage.jsx";
 import SearchPage from "./components/searchPage.jsx";
 import ProfilePage from "./components/profilePage.jsx";
-import ClassesPage from "./components/classesPage.jsx";
+import ClassesPage from "./components/classPages/classesPage.jsx";
 import CoursesListByTeacherPage from "./components/coursesListByTeacherPage.jsx";
 import TaskPage from "./components/taskPage.jsx";
 import TeacherPanel from "./components/createLessonPage.jsx";
 import CourseManagementPage from "./components/CourseManagement.jsx";
+import ClassStudents from "./components/classPages/ClassStudents.jsx";
+import StudentProgress from "./components/classPages/StudentProgress.jsx";
 
 function App() {
     const [user, setUser] = useState(null); // залогиненый юзер
@@ -134,6 +136,14 @@ function App() {
                 <Route
                     path="/manage-courses"
                     element={user?.role === 'teacher' ? <CourseManagementPage user={user} /> : <Navigate to="/" />}
+                />
+                <Route
+                    path="/teacher/classes/:classId/students"
+                    element={user?.role === 'teacher' ? <ClassStudents /> : <Navigate to="/" />}
+                />
+                <Route
+                    path="/teacher/students/:studentId/progress"
+                    element={user?.role === 'teacher' ? <StudentProgress /> : <Navigate to="/" />}
                 />
             </Routes>
             <footer>

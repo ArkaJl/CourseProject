@@ -416,3 +416,182 @@ u{
     border-bottom: 1px solid #eee;
     padding-bottom: 0.5rem;
 }
+
+/*/страница классов*/
+
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.classes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.class-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.teacher-info {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.error {
+    color: #d32f2f;
+    padding: 15px;
+    background-color: #fde8e8;
+    border-radius: 4px;
+}
+.teacher-classes, .student-classes {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+.class-list, .student-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.class-item, .student-item {
+    padding: 15px;
+    border: 1px solid #4a4a4a;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    color: #80FF00;
+}
+
+.class-item:hover, .student-item:hover {
+    background-color: #272727;
+    transform: translateY(-2px);
+}
+
+.progress-list {
+    margin-top: 20px;
+}
+
+.progress-item {
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+}
+
+.create-class-form, .join-class-form {
+    margin: 20px 0;
+    padding: 15px;
+    background: #272727;
+    border-radius: 8px;
+}
+
+.create-class-form input,
+.join-class-form input {
+    padding: 8px;
+    margin-right: 10px;
+    width: 200px;
+}
+
+.request-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.request-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.approve-btn {
+    background: #4CAF50;
+    color: white;
+}
+
+.reject-btn {
+    background: #f44336;
+    color: white;
+}
+
+.error {
+    color: #f44336;
+}
+
+.success {
+    color: #4CAF50;
+}
+
+.teacher-classes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Стили для кнопки копирования */
+.copy-id-btn {
+    padding: 5px 10px;
+    margin-left: 15px;
+    background: rgba(128, 255, 0, 0.2);
+    border: 1px solid #80FF00;
+    border-radius: 5px;
+    color: #80FF00;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: all 0.3s;
+}
+
+.copy-id-btn:hover {
+    background: rgba(128, 255, 0, 0.4);
+}
+
+/* Улучшенные стили для карточки класса */
+.class-item {
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #4a4a4a;
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+.class-item:hover {
+    border-color: #80FF00;
+    box-shadow: 0 0 15px rgba(128, 255, 0, 0.3);
+}
+
+.class-item p {
+    margin: 30px 0;
+    color: #aaa;
+}
+
+.class-item strong {
+    color: #80FF00;
+}
+.lesson-card {
+    background: rgba(0, 0, 0, 0.3);
+    border-left: 4px solid #80FF00;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.debug-data {
+    background: #333;
+    color: #80FF00;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 15px 0;
+    white-space: pre-wrap;
+    font-family: monospace;
+}
+
+

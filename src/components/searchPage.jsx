@@ -18,14 +18,7 @@ function SearchPage() {
                 console.error('Ошибка при запросе данных:', error);
             });
     }, []);
-
-    const fake = () => {
-        const fakeItem = []
-        for (let i = 0; i < 10; i++) {
-            fakeItem[i] = {name: faker.company.name(), description: faker.lorem.text(), id: i, order: i+1};
-        }
-        return fakeItem;
-    }
+    console.log(data)
 
     const sortedTerm = data.filter(item => item.name.toLowerCase().includes(term.toLowerCase()));
 
@@ -40,11 +33,10 @@ function SearchPage() {
         </form>
         <div className="profile-container">{sortedTerm.map((item) => {
             return <ul key={item.id}>
-                <Link to={`/courses/${item.id}/lessons`} className="link">
+                <Link to={`/courses/${item.course_id}/lessons`} className="link">
                     <li className="li-element notDot flex">
                         <h3 className="padding-left-right">By {item.username}</h3>
                         <h3 className="padding-left-right"> ---- {item.name} ----</h3>
-                        <p className="padding-left-right">{item.description} --------------→</p>
                     </li>
                 </Link>
             </ul>

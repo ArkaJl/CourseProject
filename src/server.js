@@ -153,7 +153,11 @@ app.get('/api/data/lessonResult/:userId/result', async (req, res) => {
 //Поиск курсов
 app.get('/api/data/courses', async (req, res) => {
     try {
-        const [results] = await pool.query('SELECT l.*, c.teacher_id, c.name, u.username FROM courses c JOIN lessons l ON l.course_id = c.id JOIN users u ON c.teacher_id = u.id');
+        const [results] = await pool.query('SELECT l.course_id, c.teacher_id, MAX(c.name) AS name, MAX(u.username) AS username\n' +
+            'FROM courses c\n' +
+            'JOIN lessons l ON l.course_id = c.id\n' +
+            'JOIN users u ON c.teacher_id = u.id\n' +
+            'GROUP BY l.course_id, c.teacher_id');
         res.json(results);
     } catch (err) {
         console.error('Ошибка выполнения запроса:', err);
@@ -452,6 +456,297 @@ app.post('/api/task-complete', async (req, res) => {
     } catch (error) {
         console.error('Error saving result:', error);
         res.status(500).json({ error: 'Ошибка сервера' });
+    }
+});
+
+
+// Получение классов преподавателя с количеством студентов
+app.get('/api/teacher/:teacherId/classes', async (req, res) => {
+    try {
+        const [classes] = await pool.query(`
+            SELECT c.*, COUNT(cs.student_id) as student_count
+            FROM classes c
+            LEFT JOIN class_students cs ON c.id = cs.class_id
+            WHERE c.teacher_id = ?
+            GROUP BY c.id
+        `, [req.params.teacherId]);
+        res.json(classes);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Ошибка сервера' });
+    }
+});
+
+// Получение студентов класса с прогрессом
+app.get('/api/classes/:classId/students', async (req, res) => {
+    try {
+        const [students] = await pool.query(`
+            SELECT u.id, u.username, u.role,
+                   COUNT(lr.id) as completed_lessons
+            FROM users u
+            JOIN class_students cs ON u.id = cs.student_id
+            LEFT JOIN lesson_result lr ON u.id = lr.student_id
+            WHERE cs.class_id = ?
+            GROUP BY u.id
+        `, [req.params.classId]);
+        res.json(students);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Ошибка сервера' });
+    }
+});
+
+// Получение прогресса студента по курсам преподавателя
+app.get('/api/students/:studentId/progress', async (req, res) => {
+    try {
+        const { teacher_id } = req.query;
+
+        if (!teacher_id) {
+            return res.status(400).json({ error: 'Не указан teacher_id' });
+        }
+
+        const [progress] = await pool.query(`
+            SELECT 
+                lr.*, 
+                l.description as lesson_description,
+                c.name as course_name
+            FROM lesson_result lr
+            JOIN lessons l ON lr.lesson_id = l.id
+            JOIN courses c ON l.course_id = c.id
+            WHERE lr.student_id = ? AND c.teacher_id = ?
+            ORDER BY lr.execution_date DESC
+        `, [req.params.studentId, teacher_id]);
+
+        res.json(progress);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Ошибка сервера' });
+    }
+});
+// Получение информации о классе
+app.get('/api/classes/:id', async (req, res) => {
+    try {
+        const [classes] = await pool.query(
+            'SELECT id, name, teacher_id FROM classes WHERE id = ?',
+            [req.params.id]
+        );
+
+        if (classes.length === 0) {
+            return res.status(404).json({ error: 'Класс не найден' });
+        }
+
+        res.json(classes[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Ошибка сервера' });
+    }
+});
+// Создание класса
+// Создание класса
+app.post('/api/classes', async (req, res) => {
+    try {
+        const { name, teacher_id } = req.body;
+
+        if (!name || !teacher_id) {
+            return res.status(400).json({ error: 'Не указано название класса или ID преподавателя' });
+        }
+
+        // Проверяем, существует ли преподаватель
+        const [teacher] = await pool.query(
+            'SELECT id FROM users WHERE id = ? AND role = "teacher"',
+            [teacher_id]
+        );
+
+        if (teacher.length === 0) {
+            return res.status(400).json({ error: 'Преподаватель не найден' });
+        }
+
+        const [result] = await pool.query(
+            'INSERT INTO classes (name, teacher_id) VALUES (?, ?)',
+            [name, teacher_id]
+        );
+
+        // Возвращаем полную информацию о созданном классе
+        const [newClass] = await pool.query(`
+            SELECT c.*, 0 as student_count 
+            FROM classes c 
+            WHERE c.id = ?
+        `, [result.insertId]);
+
+        res.status(201).json(newClass[0]);
+    } catch (error) {
+        console.error('Ошибка при создании класса:', error);
+        res.status(500).json({ error: 'Ошибка сервера' });
+    }
+});
+
+// Создание запроса на вступление
+app.post('/api/class-requests', async (req, res) => {
+    try {
+        const { class_id, student_id } = req.body;
+
+        // Проверяем существует ли класс
+        const [classes] = await pool.query(
+            'SELECT teacher_id FROM classes WHERE id = ?',
+            [class_id]
+        );
+
+        if (classes.length === 0) {
+            return res.status(404).json({ error: 'Класс не найден' });
+        }
+
+        // Проверяем не состоит ли уже студент в классе
+        const [existing] = await pool.query(
+            'SELECT id FROM class_students WHERE class_id = ? AND student_id = ?',
+            [class_id, student_id]
+        );
+
+        if (existing.length > 0) {
+            return res.status(400).json({ error: 'Вы уже состоите в этом классе' });
+        }
+
+        // Проверяем существующий запрос
+        const [requests] = await pool.query(
+            'SELECT id FROM class_requests WHERE class_id = ? AND student_id = ?',
+            [class_id, student_id]
+        );
+
+        if (requests.length > 0) {
+            return res.status(400).json({ error: 'Запрос уже отправлен' });
+        }
+
+        // Создаем запрос
+        const [result] = await pool.query(
+            'INSERT INTO class_requests (class_id, student_id) VALUES (?, ?)',
+            [class_id, student_id]
+        );
+
+        res.status(201).json({ id: result.insertId });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Ошибка при создании запроса' });
+    }
+});
+
+// Получение запросов для преподавателя
+app.get('/api/class-requests', async (req, res) => {
+    try {
+        const { teacher_id } = req.query;
+        const [requests] = await pool.query(`
+            SELECT cr.*, u.username as student_name, c.name as class_name
+            FROM class_requests cr
+            JOIN classes c ON cr.class_id = c.id
+            JOIN users u ON cr.student_id = u.id
+            WHERE c.teacher_id = ? AND cr.status = 'pending'
+        `, [teacher_id]);
+        res.json(requests);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Ошибка при получении запросов' });
+    }
+});
+
+// Обработка запроса (принять/отклонить)
+app.put('/api/class-requests/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { action } = req.body;
+
+        // Получаем запрос
+        const [requests] = await pool.query(`
+            SELECT cr.*, c.teacher_id
+            FROM class_requests cr
+            JOIN classes c ON cr.class_id = c.id
+            WHERE cr.id = ?
+        `, [id]);
+
+        if (requests.length === 0) {
+            return res.status(404).json({ error: 'Запрос не найден' });
+        }
+
+        const request = requests[0];
+
+        if (action === 'approve') {
+            // Добавляем студента в класс
+            await pool.query(
+                'INSERT INTO class_students (class_id, student_id) VALUES (?, ?)',
+                [request.class_id, request.student_id]
+            );
+        }
+
+        // Обновляем статус запроса
+        await pool.query(
+            'UPDATE class_requests SET status = ? WHERE id = ?',
+            [action === 'approve' ? 'approved' : 'rejected', id]
+        );
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Ошибка при обработке запроса' });
+    }
+});
+
+// Получение информации о пользователе по ID
+app.get('/api/users/:id', async (req, res) => {
+    try {
+        const [users] = await pool.query(
+            'SELECT id, username, role FROM users WHERE id = ?',
+            [req.params.id]
+        );
+
+        if (users.length === 0) {
+            return res.status(404).json({
+                error: 'Пользователь не найден',
+                id: req.params.id
+            });
+        }
+
+        res.json({
+            id: users[0].id,
+            username: users[0].username,
+            role: users[0].role
+        });
+    } catch (err) {
+        console.error('Ошибка при получении пользователя:', err);
+        res.status(500).json({
+            error: 'Внутренняя ошибка сервера',
+            details: err.message
+        });
+    }
+});
+
+// Удаление студента из класса
+app.delete('/api/classes/:classId/students/:studentId', async (req, res) => {
+    try {
+        const { classId, studentId } = req.params;
+
+        // Проверяем, существует ли класс
+        const [classes] = await pool.query(
+            'SELECT id FROM classes WHERE id = ?',
+            [classId]
+        );
+
+        if (classes.length === 0) {
+            return res.status(404).json({ error: 'Класс не найден' });
+        }
+
+        // Удаляем студента из класса
+        await pool.query(
+            'DELETE FROM class_students WHERE class_id = ? AND student_id = ?',
+            [classId, studentId]
+        );
+
+        // Также удаляем все запросы этого студента в этот класс
+        await pool.query(
+            'DELETE FROM class_requests WHERE class_id = ? AND student_id = ?',
+            [classId, studentId]
+        );
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error removing student from class:', error);
+        res.status(500).json({ error: 'Ошибка при удалении студента из класса' });
     }
 });
 
