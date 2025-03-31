@@ -18,13 +18,12 @@ function SearchPage() {
                 console.error('Ошибка при запросе данных:', error);
             });
     }, []);
-    console.log(data)
 
     const sortedTerm = data.filter(item => item.name.toLowerCase().includes(term.toLowerCase()));
 
 
 
-    return <div>
+    return <div className="profile-container">
         <form className="card ">
             <h2>Поиск курсов</h2>
             <input type="text" id="searchInput" onChange={(e) => {
@@ -32,7 +31,7 @@ function SearchPage() {
             }}/>
         </form>
         <div className="profile-container">{sortedTerm.map((item) => {
-            return <ul key={item.id}>
+            return <ul key={item.course_id}>
                 <Link to={`/courses/${item.course_id}/lessons`} className="link">
                     <li className="li-element notDot flex">
                         <h3 className="padding-left-right">By {item.username}</h3>

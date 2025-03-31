@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-function RegistryPage({ setUser }) {
+function RegistryPage() {
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -66,7 +66,6 @@ function RegistryPage({ setUser }) {
             [name]: value
         }));
 
-        // Clear error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({
                 ...prev,
@@ -93,10 +92,10 @@ function RegistryPage({ setUser }) {
                 role: formData.role,
                 username: formData.username
             });
+            console.log(response)
 
             if (response.data.success) {
                 setSuccessMessage("Регистрация прошла успешно!");
-                setUser(formData.email);
             } else {
                 setErrors(prev => ({
                     ...prev,

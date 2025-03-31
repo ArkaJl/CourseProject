@@ -39,7 +39,7 @@ function LessonsPage() {
         </ul>
     })
 
-    return <div className="card">
+    return <div className="card profile-container">
         <h2>Уроки</h2>
         {result}
     </div>

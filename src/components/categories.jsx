@@ -37,7 +37,7 @@ function categories(){
         </ul>
     })
 
-    return <div className="card">
+    return <div className="card profile-container">
         <h2>Категории</h2>
         {result}
     </div>

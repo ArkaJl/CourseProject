@@ -19,13 +19,6 @@ function CourseListPage() {
             });
     }, []);
 
-    const fake = () => {
-        const fakeItem = []
-        for (let i = 0; i < 10; i++) {
-            fakeItem[i] = {name: faker.company.name(), description: faker.lorem.text(), id: i};
-        }
-        return fakeItem;
-    }
 
     const result = data.map((item) => {
         return <ul key={item.id}>
@@ -38,7 +31,7 @@ function CourseListPage() {
         </ul>
     });
 
-    return <div className="card">
+    return <div className="card profile-container">
         <h2>Курсы</h2>
         {result}
     </div>

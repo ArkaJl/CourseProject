@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
+import LeaderboardPage from "./LeaderboardPage.jsx";
 
 function ProfilePage({user}) {
     const [data, setData] = useState([]); //получение данных с бд
@@ -43,15 +44,19 @@ function ProfilePage({user}) {
     }
 
     return (
-        <div className="card profile-container">
-            <h2>Профиль</h2>
-            <div className="card flex">
-                <h3>Имя пользователя: {user.username}</h3>
-                <h3>Общее количество баллов: {score()}</h3>
+        <div className="flex">
+            <div className="card profile-container" style={{ position: "relative", top: '-10px', left: '100px', right: 0, bottom: 0 }}>
+                <h2>Профиль</h2>
+                <div className="card flex">
+                    <h3>Имя пользователя: {user.username}</h3>
+                    <h3>Общее количество баллов: {score()}</h3>
+                </div>
+                <h2>Пройденные уроки:</h2>
+                <ExecutedLessons/>
             </div>
-            <h2>Пройденные уроки:</h2>
-            <ExecutedLessons />
+            <LeaderboardPage user={user} />
         </div>
+
     );
 }
 

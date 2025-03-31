@@ -175,7 +175,7 @@ app.post('/api/register', async (req, res) => {
       VALUES (?, ?, ?, ?)`;
 
         const [result] = await pool.execute(query, [login, password, role, username]);
-        res.status(201).json({ message: 'Пользователь зарегистрирован', userId: result.insertId });
+        res.status(201).json({ success: 'Пользователь зарегистрирован', userId: result.insertId });
     } catch (error) {
         console.error('Ошибка при регистрации:', error);
         res.status(500).json({ error: 'Ошибка сервера' });
@@ -747,6 +747,79 @@ app.delete('/api/classes/:classId/students/:studentId', async (req, res) => {
     } catch (error) {
         console.error('Error removing student from class:', error);
         res.status(500).json({ error: 'Ошибка при удалении студента из класса' });
+    }
+});
+
+// Таблица лидеров - топ 3
+app.get('/api/leaderboard/top', async (req, res) => {
+    try {
+        const [results] = await pool.query(`
+            SELECT 
+                u.id,
+                u.username,
+                SUM(lr.current_score) as total_score
+            FROM 
+                users u
+            JOIN 
+                lesson_result lr ON u.id = lr.student_id
+            GROUP BY 
+                u.id
+            ORDER BY 
+                total_score DESC
+            LIMIT 3
+        `);
+        res.json(results);
+    } catch (err) {
+        console.error('Ошибка получения топ-3 лидеров:', err);
+        res.status(500).json({ error: 'Ошибка сервера' });
+    }
+});
+
+// Таблица лидеров - позиция пользователя и соседи
+app.get('/api/leaderboard/nearby', async (req, res) => {
+    try {
+        const { userId } = req.query;
+
+        // Сначала получаем общий рейтинг всех пользователей
+        const [allUsers] = await pool.query(`
+            SELECT 
+                u.id,
+                u.username,
+                SUM(lr.current_score) as total_score,
+                RANK() OVER (ORDER BY SUM(lr.current_score) DESC) as position
+            FROM 
+                users u
+            LEFT JOIN 
+                lesson_result lr ON u.id = lr.student_id
+            GROUP BY 
+                u.id
+            ORDER BY 
+                total_score DESC
+        `);
+
+        // Находим текущего пользователя
+        const currentUser = allUsers.find(u => u.id == userId);
+        if (!currentUser) {
+            return res.status(404).json({ error: 'Пользователь не найден' });
+        }
+
+        // Находим индекс пользователя в общем списке
+        const userIndex = allUsers.findIndex(u => u.id == userId);
+
+        // Определяем диапазон для соседних пользователей (8 выше и 2 ниже)
+        const start = Math.max(0, userIndex - 8);
+        const end = Math.min(allUsers.length, userIndex + 3); // +3 потому что включаем самого пользователя + 2 ниже
+
+        // Получаем соседних пользователей
+        const nearbyUsers = allUsers.slice(start, end);
+
+        res.json({
+            userPosition: currentUser.position,
+            nearbyUsers: nearbyUsers
+        });
+    } catch (err) {
+        console.error('Ошибка получения позиции пользователя:', err);
+        res.status(500).json({ error: 'Ошибка сервера' });
     }
 });
 

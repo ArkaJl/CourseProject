@@ -14,6 +14,7 @@ import TeacherPanel from "./components/createLessonPage.jsx";
 import CourseManagementPage from "./components/CourseManagement.jsx";
 import ClassStudents from "./components/classPages/ClassStudents.jsx";
 import StudentProgress from "./components/classPages/StudentProgress.jsx";
+import LeaderboardPage from "./components/LeaderboardPage.jsx";
 
 function App() {
     const [user, setUser] = useState(null); // залогиненый юзер
@@ -42,7 +43,6 @@ function App() {
         }
     }, [user]);
 
-    console.log(user);
 
     return (
         <Router>
@@ -91,7 +91,7 @@ function App() {
                 <Route path="/login" element={user ? <Navigate to="/categories"/> : <AuthPage setUser={setUser}/>}/>
                 <Route
                     path="/register"
-                    element={user ? <Navigate to="/categories"/> : <RegistryPage setUser={setUser}/>}
+                    element={user ? null : <RegistryPage/>}
                 />
                 <Route
                     path="/profile"
@@ -115,7 +115,7 @@ function App() {
                 />
                 <Route
                     path="/categories"
-                    element={<Categories/>}
+                    element={<Categories user={user}/>}
                 />
                 <Route
                     path="/categories/:categoryId/courses"

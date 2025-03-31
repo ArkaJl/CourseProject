@@ -594,4 +594,63 @@ u{
     font-family: monospace;
 }
 
+/* Стили для таблицы лидеров */
+.leaderboard-top, .leaderboard-nearby {
+    margin-bottom: 30px;
+}
+
+.leaderboard-top h3, .leaderboard-nearby h3 {
+    color: #80FF00;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.leader-card {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+.leader-card.current-user {
+    background-color: rgba(128, 255, 0, 0.2);
+    box-shadow: 0 0 15px rgba(128, 255, 0, 0.5);
+}
+
+.leader-position {
+    font-weight: bold;
+    width: 40px;
+    text-align: center;
+}
+
+.leader-name {
+    flex: 1;
+    padding: 0 15px;
+}
+
+.leader-score {
+    font-weight: bold;
+    color: #80FF00;
+}
+
+/* Стили для топ-3 мест */
+.gold {
+    background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(212,175,55,0.3) 50%, rgba(0,0,0,0.7) 100%);
+    border-left: 4px solid #D4AF37;
+}
+
+.silver {
+    background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(192,192,192,0.3) 50%, rgba(0,0,0,0.7) 100%);
+    border-left: 4px solid #C0C0C0;
+}
+
+.bronze {
+    background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(205,127,50,0.3) 50%, rgba(0,0,0,0.7) 100%);
+    border-left: 4px solid #CD7F32;
+}
+
 
