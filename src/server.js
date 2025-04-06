@@ -1,7 +1,6 @@
 import express from 'express';
 import mysql from 'mysql2/promise';
 import cors from 'cors';
-import bcrypt from "bcrypt";
 
 const app = express();
 const port = 5000;
@@ -76,10 +75,7 @@ app.get('/api/data/:lessonId/questions', async (req, res) => {
 app.get('/api/data/:user/classes', async (req, res) => {
     const {user} = req.params;
     try {
-        const [results] = await pool.query('SELECT cs.*, cl.name, cl.teacher_id\n' +
-            'FROM class_students cs \n' +
-            'JOIN classes cl ON cs.class_id = cl.id \n' +
-            'WHERE cs.student_id = ?', [user]);
+        const [results] = await pool.query('SELECT cs.*, cl.name, cl.teacher_id, u.id, u.username FROM class_students cs JOIN classes cl ON cs.class_id = cl.id JOIN users u ON u.id = cl.teacher_id WHERE cs.student_id = ?', [user]);
         res.json(results);
     } catch (err) {
         console.error('Ошибка выполнения запроса:', err);
@@ -87,11 +83,11 @@ app.get('/api/data/:user/classes', async (req, res) => {
     }
 });
 
-//тут список курсоов определенного учителя
-app.get('/api/data/:teacherId/courses-with-lessons', async (req, res) => {
-    const {teacherId} = req.params;
+//тут список курсов определенного учителя
+app.get('/api/data/:classId/courses-with-lessons', async (req, res) => {
+    const {classId} = req.params;
     try {
-        const [results] = await pool.query('SELECT l.*, c.teacher_id, c.name, u.username FROM courses c JOIN lessons l ON l.course_id = c.id JOIN users u ON c.teacher_id = u.id WHERE c.teacher_id=?', [teacherId]);
+        const [results] = await pool.query('SELECT cl.id, c.teacher_id, c.name, u.username FROM courses c JOIN classes cl ON cl.teacher_id = c.teacher_id JOIN users u ON c.teacher_id = u.id WHERE cl.id = ?', [classId]);
         res.json(results);
     } catch (err) {
         console.error('Ошибка выполнения запроса:', err);
@@ -266,7 +262,6 @@ app.post('/api/tasks', async (req, res) => {
     const { lesson_id, question, text, options, answer, score } = req.body;
 
     try {
-        // Преобразуем массив options в JSON строку
         const optionsJson = JSON.stringify(options);
 
         await pool.execute(
@@ -481,13 +476,28 @@ app.get('/api/teacher/:teacherId/classes', async (req, res) => {
 app.get('/api/classes/:classId/students', async (req, res) => {
     try {
         const [students] = await pool.query(`
-            SELECT u.id, u.username, u.role,
-                   COUNT(lr.id) as completed_lessons
-            FROM users u
-            JOIN class_students cs ON u.id = cs.student_id
-            LEFT JOIN lesson_result lr ON u.id = lr.student_id
-            WHERE cs.class_id = ?
-            GROUP BY u.id
+SELECT 
+    u.id, 
+    u.username, 
+    u.role,
+    COUNT(DISTINCT lr.lesson_id) AS completed_lessons
+FROM 
+    users u
+JOIN 
+    class_students cs ON u.id = cs.student_id
+JOIN 
+    classes cl ON cs.class_id = cl.id
+JOIN 
+    courses co ON cl.teacher_id = co.teacher_id
+JOIN 
+    lessons l ON co.id = l.course_id
+LEFT JOIN 
+    lesson_result lr ON u.id = lr.student_id AND l.id = lr.lesson_id
+WHERE 
+    cl.id = ?
+    AND lr.id IS NOT NULL
+GROUP BY 
+    u.id, u.username, u.role
         `, [req.params.classId]);
         res.json(students);
     } catch (err) {

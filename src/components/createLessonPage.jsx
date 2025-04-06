@@ -323,14 +323,6 @@ function TeacherPanel({ user }) {
                                         </div>
 
                                         <div>
-                                            <textarea
-                                                name="text"
-                                                placeholder="Дополнительный текст (необязательно)"
-                                                value={lessonForm.text}
-                                                onChange={handleLessonChange}
-                                                rows="3"
-                                                style={{ width: '100%', margin: '10px 0' }}
-                                            />
                                         </div>
 
                                         <h4>Варианты ответов:</h4>

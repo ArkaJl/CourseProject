@@ -14,7 +14,7 @@ import TeacherPanel from "./components/createLessonPage.jsx";
 import CourseManagementPage from "./components/CourseManagement.jsx";
 import ClassStudents from "./components/classPages/ClassStudents.jsx";
 import StudentProgress from "./components/classPages/StudentProgress.jsx";
-import LeaderboardPage from "./components/LeaderboardPage.jsx";
+import TeachersCourses from "./components/classPages/TeachersCourses.jsx";
 
 function App() {
     const [user, setUser] = useState(null); // залогиненый юзер
@@ -144,6 +144,10 @@ function App() {
                 <Route
                     path="/teacher/students/:studentId/progress"
                     element={user?.role === 'teacher' ? <StudentProgress /> : <Navigate to="/" />}
+                />
+                <Route
+                    path="/classes/:teacherId/courses"
+                    element={<TeachersCourses />}
                 />
             </Routes>
             <footer>
