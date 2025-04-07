@@ -9,16 +9,16 @@ app.use(express.json());
 app.use(cors());
 
 const pool = mysql.createPool({
-    host: 'localhost', //localhost MySQL-8.2
+    host: 'MySQL-8.2', //localhost MySQL-8.2
     user: 'root',
-    password: '1234',
+    password: '',
     database: 'db2',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
 });
 
-//пользователи для автризации
+//пользователи для авторизации
 app.post('/api/auth/login', async (req, res) => {
     const { login, password } = req.body;
     console.log('Login attempt:', login); // Логируем только логин (без пароля)
