@@ -116,17 +116,17 @@ nav a:hover {
 
 .button {
     padding: 15px 50px 15px 50px;
-    background-color: #80FF00;
+    background-color: #80ff00;
     color: black;
     text-align: center;
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    box-shadow:0 0 20px rgba(0, 255, 0, 0.5);
 }
 
 .button:hover {
-    background-color: #66FFFF;
+    background-color: #01cccc;
 }
 
 .leaderboard {
@@ -451,7 +451,7 @@ u{
 .teacher-classes, .student-classes {
     margin-top: 20px;
     padding: 15px;
-    border: 1px solid #eee;
+    border: 1px solid #1c433b;
     border-radius: 8px;
 }
 
@@ -489,7 +489,9 @@ u{
 .create-class-form, .join-class-form {
     margin: 20px 0;
     padding: 15px;
-    background: #272727;
+    border: 1px solid #1c433b;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,0) 37%, rgba(4,207,174,0.41220238095238093) 100%);
     border-radius: 8px;
 }
 

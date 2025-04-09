@@ -330,15 +330,15 @@ function TeacherPanel({ user }) {
                                         }}>
                                             {course.name}
                                         </span>
-                                            <span style={{
-                                                fontSize: '12px',
-                                                color: '#80FF00',
-                                                backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                                                padding: '2px 6px',
-                                                borderRadius: '10px'
-                                            }}>
-                                            {course.lessons_count || 0} уроков
-                                        </span>
+                                        {/*    <span style={{*/}
+                                        {/*        fontSize: '12px',*/}
+                                        {/*        color: '#80FF00',*/}
+                                        {/*        backgroundColor: 'rgba(0, 0, 0, 0.4)',*/}
+                                        {/*        padding: '2px 6px',*/}
+                                        {/*        borderRadius: '10px'*/}
+                                        {/*    }}>*/}
+                                        {/*    {course.lessons_count || 0} уроков*/}
+                                        {/*</span>*/}
                                         </li>
                                     ))}
                                 </ul>

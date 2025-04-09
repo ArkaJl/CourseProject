@@ -38,7 +38,7 @@ export default function JoinClassForm({ studentId }) {
                     placeholder="ID класса"
                     required
                 />
-                <button type="submit" disabled={loading}>
+                <button type="submit" className="button" disabled={loading}>
                     {loading ? "Отправка..." : "Отправить запрос"}
                 </button>
                 {message && <p className="success">{message}</p>}

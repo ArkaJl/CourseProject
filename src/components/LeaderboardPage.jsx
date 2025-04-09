@@ -8,8 +8,6 @@ function LeaderboardPage({user}) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    console.log(user);
-
     useEffect(() => {
         const fetchLeaderboard = async () => {
             try {

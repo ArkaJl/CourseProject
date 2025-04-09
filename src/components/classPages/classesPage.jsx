@@ -70,7 +70,7 @@ export default function ClassesPage({ user }) {
                 <h2>Мои классы</h2>
 
                 {/* Форма вступления в класс для студентов */}
-                {user.role === 'student' && (
+                {(
                     <JoinClassForm studentId={user.id} />
                 )}
 
