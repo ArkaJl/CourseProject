@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Link} from "react-router-dom";
-import {faker} from "@faker-js/faker"
 
 function categories(){
     const [data, setData] = useState([]); //получение данных с бд
@@ -18,13 +17,6 @@ function categories(){
             });
     }, []);
 
-    const fake = () => {
-        const fakeItem = []
-        for (let i = 0; i < 10; i++) {
-            fakeItem[i] = {name: faker.book.author(), description: faker.lorem.paragraph(), id: i};
-        }
-        return fakeItem;
-    }
 
     const result = data.map((item) => {
         return <ul key={item.id}>

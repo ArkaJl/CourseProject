@@ -123,7 +123,7 @@ function App() {
                 />
                 <Route
                     path="/courses/:courseId/lessons"
-                    element={<LessonsPage/>}
+                    element={user? <LessonsPage user={user}/> : null}
                 />
                 <Route
                     path="/lessons/:lessonId/questions"
