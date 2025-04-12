@@ -9,9 +9,9 @@ app.use(express.json());
 app.use(cors());
 
 const pool = mysql.createPool({
-    host: 'MySQL-8.2', //localhost MySQL-8.2
+    host: 'localhost', //localhost MySQL-8.2
     user: 'root',
-    password: '',
+    password: '1234',
     database: 'db2',
     waitForConnections: true,
     connectionLimit: 10,
@@ -87,7 +87,7 @@ app.get('/api/data/:user/classes', async (req, res) => {
 app.get('/api/data/:classId/courses-with-lessons', async (req, res) => {
     const {classId} = req.params;
     try {
-        const [results] = await pool.query('SELECT cl.id, c.teacher_id, c.name, u.username FROM courses c JOIN classes cl ON cl.teacher_id = c.teacher_id JOIN users u ON c.teacher_id = u.id WHERE cl.id = ?', [classId]);
+        const [results] = await pool.query('select c.* From courses c where c.teacher_id = ?', [classId]);
         res.json(results);
     } catch (err) {
         console.error('Ошибка выполнения запроса:', err);
