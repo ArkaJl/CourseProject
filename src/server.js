@@ -110,7 +110,7 @@ app.get('/api/data/categories', async (req, res) => {
 app.get('/api/data/categories/:categoryId/courses', async (req, res) => {
     const {categoryId} = req.params;
     try {
-        const [results] = await pool.query('SELECT * FROM courses WHERE category_id=?', [categoryId]);
+        const [results] = await pool.query('SELECT c.*, ca.title FROM courses c join categories ca on ca.id = c.category_id WHERE c.category_id=?', [categoryId]);
         res.json(results);
     } catch (err) {
         console.error('Ошибка выполнения запроса:', err);
@@ -484,18 +484,9 @@ SELECT
 FROM 
     users u
 JOIN 
-    class_students cs ON u.id = cs.student_id
-JOIN 
-    classes cl ON cs.class_id = cl.id
-JOIN 
-    courses co ON cl.teacher_id = co.teacher_id
-JOIN 
-    lessons l ON co.id = l.course_id
+    class_students cs ON u.id = cs.student_id AND cs.class_id = ?
 LEFT JOIN 
-    lesson_result lr ON u.id = lr.student_id AND l.id = lr.lesson_id
-WHERE 
-    cl.id = ?
-    AND lr.id IS NOT NULL
+    lesson_result lr ON u.id = lr.student_id
 GROUP BY 
     u.id, u.username, u.role
         `, [req.params.classId]);

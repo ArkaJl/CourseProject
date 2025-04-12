@@ -33,7 +33,7 @@ function SearchPage() {
             return <ul key={item.course_id}>
                 <Link to={`/courses/${item.course_id}/lessons`} className="link">
                     <li className="li-element notDot flex">
-                        <h3 className="padding-left-right">By {item.username}</h3>
+                        <h3 className="padding-left-right">Курс пользователя {item.username}</h3>
                         <h3 className="padding-left-right"> ---- {item.name} ----</h3>
                     </li>
                 </Link>

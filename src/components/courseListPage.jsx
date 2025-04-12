@@ -18,7 +18,7 @@ function CourseListPage() {
                 console.error('Ошибка при запросе данных:', error);
             });
     }, []);
-
+    const categoryName = data[0]?.title || null;
 
     const result = data.map((item) => {
         return <ul key={item.id}>
@@ -32,7 +32,7 @@ function CourseListPage() {
     });
 
     return <div className="card profile-container">
-        <h2>Курсы</h2>
+        <h2>Курсы категории &#34;{categoryName}&#34;</h2>
         {result}
     </div>
 }
