@@ -76,59 +76,37 @@ function CourseManagementPage({ user }) {
         loadTasks();
     }, [selectedLesson]);
 
-    // Обработчики удаления
+    // удаление
     const handleDelete = async (type, id) => {
-        if (!window.confirm(`Вы уверены, что хотите удалить этот ${type}?`)) {
-            return;
-        }
+        if (!window.confirm(`Удалить ${type}?`)) return;
 
-        setLoading(prev => ({ ...prev, deleting: true }));
-        setError('');
+        setLoading({ ...loading, deleting: true });
 
         try {
-            let endpoint = '';
-            switch (type) {
-                case 'course':
-                    endpoint = `courses/${id}`;
-                    break;
-                case 'lesson':
-                    endpoint = `lessons/${id}`;
-                    break;
-                case 'task':
-                    endpoint = `tasks/${id}`;
-                    break;
-                default:
-                    return;
-            }
+            await axios.delete(`http://localhost:5000/api/${type}s/${id}`);
 
-            await axios.delete(`http://localhost:5000/api/${endpoint}`);
-
-            // Обновляем состояние после удаления
+            // Обновление состояния
             if (type === 'course') {
                 setCourses(courses.filter(c => c.id !== id));
-                setSelectedCourse(null);
-            } else if (type === 'lesson') {
-                const updatedCourses = courses.map(course => {
-                    if (course.id === selectedCourse.id) {
-                        return {
-                            ...course,
-                            lessons: course.lessons.filter(l => l.id !== id)
-                        };
-                    }
-                    return course;
-                });
+                if (selectedCourse?.id === id) setSelectedCourse(null);
+            }
+            else if (type === 'lesson') {
+                const updatedCourses = courses.map(course => ({
+                    ...course,
+                    lessons: course.lessons.filter(l => l.id !== id),
+                }));
                 setCourses(updatedCourses);
-                setSelectedLesson(null);
-            } else if (type === 'task') {
+                if (selectedLesson?.id === id) setSelectedLesson(null);
+            }
+            else if (type === 'task') {
                 setTasks(tasks.filter(t => t.id !== id));
             }
 
-            alert(`${type === 'course' ? 'Курс' : type === 'lesson' ? 'Урок' : 'Задание'} успешно удален`);
-        } catch (error) {
-            setError(`Ошибка при удалении: ${error.response?.data?.error || error.message}`);
-            console.error(`Error deleting ${type}:`, error);
+            alert(`Успешно удалено!`);
+        } catch (err) {
+            setError(`Ошибка: ${err.message}`);
         } finally {
-            setLoading(prev => ({ ...prev, deleting: false }));
+            setLoading({ ...loading, deleting: false });
         }
     };
 
