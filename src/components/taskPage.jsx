@@ -13,49 +13,60 @@ function TaskPage({ user }) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const [answersLog, setAnswersLog] = useState([]); // Новое состояние для логирования ответов
+    const [answersLog, setAnswersLog] = useState([]);
+    const [showAnswerFeedback, setShowAnswerFeedback] = useState(false); // Новое состояние для отображения фидбека
+    const [isAnswerCorrect, setIsAnswerCorrect] = useState(false); // Новое состояние для правильности ответа
+
+    const handleAnswerSelect = (answerIndex) => {
+        if (showAnswerFeedback) return; // Блокируем выбор ответа, пока показывается фидбек
+        setSelectedAnswer(answerIndex);
+    };
 
     const handleNextQuestion = () => {
         const currentQuestion = questions[currentQuestionIndex];
         const isCorrect = selectedAnswer === currentQuestion.answer;
-        const questionScore = isCorrect ? (currentQuestion.score || 1) : 0;
 
-        // Логируем каждый ответ
+        // Логируем ответ
         setAnswersLog(prev => [
             ...prev,
             {
                 questionId: currentQuestion.id,
                 isCorrect,
-                score: questionScore
+                score: isCorrect ? (currentQuestion.score || 1) : 0
             }
         ]);
 
-        // Сразу вычисляем новые значения
+        // Обновляем счетчики
         const newCorrectCount = isCorrect ? correctAnswersCount + 1 : correctAnswersCount;
+        const questionScore = isCorrect ? (currentQuestion.score || 1) : 0;
         const newTotalScore = totalScore + questionScore;
 
         setCorrectAnswersCount(newCorrectCount);
         setTotalScore(newTotalScore);
 
+        // Показываем фидбек
+        setIsAnswerCorrect(isCorrect);
+        setShowAnswerFeedback(true);
+    };
+
+    const proceedToNextQuestion = () => {
+        setShowAnswerFeedback(false);
+        setSelectedAnswer(null);
+
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(prev => prev + 1);
-            setSelectedAnswer(null);
         } else {
-            // Передаём актуальные значения при завершении
-            handleFinishQuiz(newTotalScore);
+            handleFinishQuiz(totalScore + (isAnswerCorrect ? (questions[currentQuestionIndex].score || 1) : 0));
         }
     };
 
     const handleFinishQuiz = async (finalScore) => {
-        console.log("Saving to DB with score:", finalScore); // Отладочный вывод
-        console.log("Answers log:", answersLog); // История ответов
-
         try {
             const execution_date = new Date().toISOString().split('T')[0];
             const payload = {
                 lesson_id: lessonId,
                 student_id: user.id,
-                current_score: finalScore, // Используем переданное значение
+                current_score: finalScore,
                 execution_date
             };
 
@@ -63,7 +74,6 @@ function TaskPage({ user }) {
                 ? await axios.put(`http://localhost:5000/api/task-complete/${existingResultId}`, payload)
                 : await axios.post('http://localhost:5000/api/task-complete', payload);
 
-            console.log("Save result response:", response.data);
             setShowResult(true);
         } catch (err) {
             console.error('Ошибка сохранения:', err.response?.data || err.message);
@@ -76,11 +86,9 @@ function TaskPage({ user }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Загрузка вопросов
                 const questionsResponse = await axios.get(`http://localhost:5000/api/data/${lessonId}/questions`);
                 setQuestions(questionsResponse.data);
 
-                // Проверка существующего результата
                 if (user?.id) {
                     const resultResponse = await axios.get(
                         `http://localhost:5000/api/results?lesson_id=${lessonId}&student_id=${user.id}`
@@ -100,12 +108,6 @@ function TaskPage({ user }) {
         fetchData();
     }, [lessonId, user?.id]);
 
-
-    const handleAnswerSelect = (answerIndex) => {
-        setSelectedAnswer(answerIndex);
-    };
-
-
     const handleContinue = () => {
         navigate(-1);
     };
@@ -113,6 +115,9 @@ function TaskPage({ user }) {
     if (isLoading) return <div className="card">Загрузка...</div>;
     if (error) return <div className="card error">{error}</div>;
     if (questions.length === 0) return <div className="card">Нет вопросов для этого урока</div>;
+
+    const currentQuestion = questions[currentQuestionIndex];
+    const correctAnswerIndex = currentQuestion.answer;
 
     return (
         <div className="profile-container">
@@ -128,27 +133,60 @@ function TaskPage({ user }) {
             ) : (
                 <div className="card">
                     <h1>Вопрос {currentQuestionIndex + 1} из {questions.length}</h1>
-                    <h2>{questions[currentQuestionIndex].question}</h2>
+                    <h2>{currentQuestion.question}</h2>
                     <ul className="notDot">
-                        {questions[currentQuestionIndex].options.map((option, index) => (
-                            <li
-                                key={index}
-                                className={`li-element ${selectedAnswer === index ? 'selected' : ''}`}
-                                onClick={() => handleAnswerSelect(index)}
-                            >
-                                {option}
-                            </li>
-                        ))}
+                        {currentQuestion.options.map((option, index) => {
+                            let className = 'li-element';
+
+                            if (showAnswerFeedback) {
+                                if (index === correctAnswerIndex) {
+                                    className += ' correct';
+                                } else if (index === selectedAnswer && index !== correctAnswerIndex) {
+                                    className += ' incorrect';
+                                }
+                            } else if (selectedAnswer === index) {
+                                className += ' selected';
+                            }
+
+                            return (
+                                <li
+                                    key={index}
+                                    className={className}
+                                    onClick={() => handleAnswerSelect(index)}
+                                >
+                                    {option}
+                                </li>
+                            );
+                        })}
                     </ul>
-                    <div className="flex">
-                        <button
-                            className="button"
-                            onClick={handleNextQuestion}
-                            disabled={selectedAnswer === null}
-                        >
-                            {currentQuestionIndex < questions.length - 1 ? 'Следующий вопрос' : 'Завершить тест'}
-                        </button>
-                    </div>
+
+                    {showAnswerFeedback && (
+                        <div className={`feedback ${isAnswerCorrect ? 'correct' : 'incorrect'}`}>
+                            {isAnswerCorrect ? (
+                                <p>Правильно! ✔️</p>
+                            ) : (
+                                <p>Неправильно. Правильный ответ: {currentQuestion.options[correctAnswerIndex]}</p>
+                            )}
+                            <button
+                                className="button"
+                                onClick={proceedToNextQuestion}
+                            >
+                                {currentQuestionIndex < questions.length - 1 ? 'Далее' : 'Завершить тест'}
+                            </button>
+                        </div>
+                    )}
+
+                    {!showAnswerFeedback && (
+                        <div className="flex">
+                            <button
+                                className="button"
+                                onClick={handleNextQuestion}
+                                disabled={selectedAnswer === null}
+                            >
+                                Проверить ответ
+                            </button>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
