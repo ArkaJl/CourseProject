@@ -71,7 +71,6 @@ function AuthPage({ setUser }) {
         setIsSubmitting(true);
         setErrors(prev => ({ ...prev, form: '' }));
 
-        console.log(formData.login, formData.password);
 
         try {
             const response = await axios.post('http://localhost:5000/api/auth/login', {

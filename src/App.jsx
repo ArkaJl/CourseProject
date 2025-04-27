@@ -83,7 +83,7 @@ function App() {
                     : (
                         <div className="card form-container">
                             <h2>Добро пожаловать на стартовую страницу!</h2>
-                            <p><u>Войдите </u>или <u>зарегистрируйтесь</u>, чтобы продолжить !</p>
+                            <p><Link to="/login" ><u className="link">Войдите </u></Link>или <Link to="/register" ><u className="link">зарегистрируйтесь</u></Link>, чтобы продолжить!</p>
                         </div>
                     )}
             </div>
