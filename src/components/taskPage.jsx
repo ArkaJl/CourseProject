@@ -122,21 +122,27 @@ function TaskPage({ user }) {
     return (
         <div className="profile-container">
             {showResult ? (
-                <div className="card">
+                <div className="result-card">
                     <h1>Ваш результат</h1>
                     <h2>Правильных ответов: {correctAnswersCount} из {questions.length}</h2>
                     <h2>Общий балл: {totalScore}</h2>
-                    <button className="button" onClick={handleContinue}>
+                    <div className="progress-bar-container">
+                        <div
+                            className="progress-bar"
+                            style={{width: `${(correctAnswersCount / questions.length) * 100}%`}}
+                        ></div>
+                    </div>
+                    <button className="task-button" onClick={handleContinue}>
                         Продолжить
                     </button>
                 </div>
             ) : (
-                <div className="card">
+                <div className="task-card">
                     <h1>Вопрос {currentQuestionIndex + 1} из {questions.length}</h1>
                     <h2>{currentQuestion.question}</h2>
-                    <ul className="notDot">
+                    <ul className="answer-options">
                         {currentQuestion.options.map((option, index) => {
-                            let className = 'li-element';
+                            let className = 'answer-option';
 
                             if (showAnswerFeedback) {
                                 if (index === correctAnswerIndex) {
@@ -161,14 +167,14 @@ function TaskPage({ user }) {
                     </ul>
 
                     {showAnswerFeedback && (
-                        <div className={`feedback ${isAnswerCorrect ? 'correct' : 'incorrect'}`}>
+                        <div className={`answer-feedback ${isAnswerCorrect ? 'correct' : 'incorrect'}`}>
                             {isAnswerCorrect ? (
                                 <p>Правильно! ✔️</p>
                             ) : (
                                 <p>Неправильно. Правильный ответ: {currentQuestion.options[correctAnswerIndex]}</p>
                             )}
                             <button
-                                className="button"
+                                className="task-button"
                                 onClick={proceedToNextQuestion}
                             >
                                 {currentQuestionIndex < questions.length - 1 ? 'Далее' : 'Завершить тест'}
@@ -177,15 +183,13 @@ function TaskPage({ user }) {
                     )}
 
                     {!showAnswerFeedback && (
-                        <div className="flex">
-                            <button
-                                className="button"
-                                onClick={handleNextQuestion}
-                                disabled={selectedAnswer === null}
-                            >
-                                Проверить ответ
-                            </button>
-                        </div>
+                        <button
+                            className="task-button"
+                            onClick={handleNextQuestion}
+                            disabled={selectedAnswer === null}
+                        >
+                            Проверить ответ
+                        </button>
                     )}
                 </div>
             )}
