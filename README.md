@@ -1,8 +1,50 @@
-# React + Vite
+# LightLingo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Интерактивное приложение для изучения английского языка
 
-Currently, two official plugins are available:
+## Описание проекта
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Это веб-приложение предназначено для интерактивного изучения английского языка. Оно включает в себя функционал для студентов и преподавателей, систему управления уроками, классами, отслеживание прогресса и элементы геймификации для повышения мотивации.
+
+### Основные функции
+
+- **Для студентов:**
+  - Регистрация и авторизация
+  - Прохождение интерактивных уроков
+  - Просмотр статистики прогресса
+  - Участие в групповых занятиях
+
+- **Для преподавателей:**
+  - Создание и управление уроками
+  - Формирование классов и управление студентами
+  - Просмотр аналитики успеваемости
+
+## Технологии
+
+- **Backend:** Node.js
+- **Frontend:** React vite, HTML/CSS, JavaScript
+- **База данных:** MySQL
+
+## Установка и запуск
+
+### Предварительные требования
+
+- Node.js 16+
+- npm
+- Git
+
+### Шаг 1: Клонирование репозитория
+
+```bash
+git clone https://github.com/ArkaJl/courseProject.git
+cd your-repo-name
+
+### Шаг 2: Установка зависимостей
+
+```npm i
+
+### Шаг 3: Запуск проекта
+Для запуска приложения:
+```npm run dev
+Для запуска api:
+```
