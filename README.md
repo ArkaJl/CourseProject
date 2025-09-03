@@ -32,19 +32,27 @@
 - Node.js 16+
 - npm
 - Git
+- База данных mySql
 
 ### Шаг 1: Клонирование репозитория
 
 ```bash
 git clone https://github.com/ArkaJl/courseProject.git
 cd your-repo-name
+```
 
 ### Шаг 2: Установка зависимостей
 
-```npm i
-
+```console
+npm i
+```
 ### Шаг 3: Запуск проекта
+**Перед запуском проекта небходимо настроить файл "server.js", указав хост, имя пользователя, пароль и название базы данных mySQL
 Для запуска приложения:
-```npm run dev
+```console
+npm run dev
+```
 Для запуска api:
+```
+npm start src/server.js
 ```
