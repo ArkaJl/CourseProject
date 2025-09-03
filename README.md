@@ -38,7 +38,7 @@
 
 ```bash
 git clone https://github.com/ArkaJl/courseProject.git
-cd your-repo-name
+cd courseProject
 ```
 
 ### Шаг 2: Установка зависимостей
